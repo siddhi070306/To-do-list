@@ -29,14 +29,20 @@ export function Chatbot() {
         setInput('');
         setIsTyping(true);
 
-        // Prepare message history for context (last 10 messages)
-        const history = messages.slice(-10).map(m => ({ role: m.role, content: m.content }));
-        history.push(userMessage);
+        try {
+            // Prepare message history for context (last 10 messages)
+            const history = messages.slice(-10).map(m => ({ role: m.role, content: m.content }));
+            history.push(userMessage);
 
-        const reply = await getAIResponse(history, tasks);
+            const reply = await getAIResponse(history, tasks);
 
-        setMessages(prev => [...prev, { role: 'assistant', content: reply }]);
-        setIsTyping(false);
+            setMessages(prev => [...prev, { role: 'assistant', content: reply }]);
+        } catch (err) {
+            console.error("Chatbot Error:", err);
+            setMessages(prev => [...prev, { role: 'assistant', content: "Sorry, I encountered an error. Please try again later." }]);
+        } finally {
+            setIsTyping(false);
+        }
     };
 
     return (
